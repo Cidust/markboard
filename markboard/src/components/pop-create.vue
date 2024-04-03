@@ -23,8 +23,6 @@ function aipTest() {
             console.log(res);
         })
 }
-
-
 </script>
 
 <template>
