@@ -1,14 +1,14 @@
 import { defineStore } from "pinia";
 
-export const useUserStore = defineStore('user',{
+export const useUserIpStore = defineStore('userIp',{
     state:()=>{
         return {
-            user:'',
+            ip:'',
         }
     },
     actions:{
-        getUser(n){
-            this.user=n;
+        setUserIp(n){
+            this.ip=n;
         }
     }
 })

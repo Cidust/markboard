@@ -4,17 +4,15 @@ import footbar from "../components/foot-bar.vue";
 
 import { signIpApi } from "@/api";
 import { onMounted } from "vue";
-import { useUserStore } from "@/stores/user";
+import { useUserIpStore } from "@/stores/userIp";
 
-const user = useUserStore();
+const userIp = useUserIpStore();
 
 function getUser() {
     signIpApi().then((res) => {
-        //console.log(res);
-        user.getUser(res.ip);
+        userIp.setUserIp(res.ip);
     })
 }
-
 onMounted(() => { getUser() });
 </script>
 

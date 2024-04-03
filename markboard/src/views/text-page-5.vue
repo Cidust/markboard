@@ -6,6 +6,7 @@ import { noteData } from "@/mock/index"
 import popcreat from '@/components/pop-create.vue'
 import popsele from '@/components/pop-sele.vue'
 import { useRoute } from 'vue-router';
+import { watch } from 'vue';
 
 let addBottom = ref(14);
 
@@ -48,6 +49,12 @@ onBeforeUnmount(() => {
 const defaultId=0;
 const route=useRoute();
 const id=computed(()=>Number(route.query.id||defaultId));
+
+//如若界面更改至别的餐厅，则目前的打开的界面需要关闭
+watch(id,()=>{
+    isCreate.value=false;
+    isSelected.value=false;
+})
 
 const ischoose = ref(true);//默认全部选中
 

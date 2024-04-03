@@ -3,7 +3,7 @@ import { computed, defineModel, ref } from "vue";
 import myButton from "./my-button.vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
-import { useUserStore } from "@/stores/user";
+import { useUserIpStore } from "@/stores/userIp";
 import { lables } from '@/utils/data';
 import { cardOriginColor, cardColor } from '@/utils/data';
 
@@ -27,9 +27,18 @@ const lableSelected = ref(0);
 function lableChange(index) {
     lableSelected.value = index;
 }
+
+function drop() {
+    crea.value=!crea.value;
+    lableSelected.value=0;
+    colorSelected.value=0;
+    mes.value='';
+    tex.value='';
+}
+
 const route = useRoute();
 const rest = computed(() => route.query.id || 0);
-const user = useUserStore();
+const userIp = useUserIpStore();
 function submit() {
     let name = '匿名';
     if (tex.value) {
@@ -39,7 +48,7 @@ function submit() {
         rest: rest,
         message: mes,
         name: name,
-        userId: user.$id,
+        userId: userIp.ip,
         moment: new Date(),
         label: lableSelected,
         color: colorSelected
@@ -100,8 +109,8 @@ function aipTest() {
                 </div>
             </div>
             <div class="tail" v-if="crea">
-                <myButton size="max" norm="secondary" class="drop" @click="crea = !crea">丢弃</myButton>
-                <myButton size="max" class="submit" @click="aipTest()">确认</myButton>
+                <myButton size="max" norm="secondary" class="drop" @click="drop()">丢弃</myButton>
+                <myButton size="max" class="submit" @click="submit()">确认</myButton>
             </div>
         </div>
     </transition>
@@ -309,4 +318,4 @@ function aipTest() {
 #windows{
     margin-top: 24px;
 }
-</style>
+</style>@/stores/userIp
