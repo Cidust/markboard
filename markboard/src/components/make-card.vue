@@ -1,4 +1,5 @@
 <script setup>
+import { useUserStore } from '@/stores/user';
 import { lables } from '@/utils/data';
 import { cardOriginColor, cardColor } from '@/utils/data';
 import { computed, ref } from 'vue';
@@ -21,31 +22,25 @@ function lableChange(index) {
 
 const mes=defineModel("mes");
 const tex=defineModel("tex");
-// const route=useRoute();
-// const rest=computed(()=>route.query.id||0);
-// defineExpose({
-//     rest,
-//     mes,
-//     tex,
-//     lableSelected,
-//     colorSelected,
-// });
-
-// function submit() {
-//     let name='匿名';
-//     if(tex.value){
-//         name=tex;
-//     }
-//     let data={
-//         rest:rest,
-//         message:mes,
-//         name:name,
-//         userId:0,
-//         moment:new Date(),
-//         label:lableSelected,
-//         color:colorSelected
-//     }
-// }
+const route=useRoute();
+const rest=computed(()=>route.query.id||0);
+const user=useUserStore();
+function submit() {
+    let name='匿名';
+    if(tex.value){
+        name=tex;
+    }
+    let data={
+        rest:rest,
+        message:mes,
+        name:name,
+        userId:user.$id,
+        moment:new Date(),
+        label:lableSelected,
+        color:colorSelected
+    }
+    console.log(data);
+}
 </script>
 
 <template>

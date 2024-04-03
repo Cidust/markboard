@@ -1,3 +1,5 @@
-import fetch from '@/utils/axios'
+import service from '@/utils/axios'
 
-export const insertNoteApi = (data) => { fetch.post('/insertnote', data) }
+export const signIpApi = () => { return service.post('/signip') }
+
+export const insertNoteApi = (data) => { service.post('/insertnote', data) }

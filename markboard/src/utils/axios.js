@@ -37,3 +37,5 @@ service.interceptors.response.use(
         return Promise.reject();
     }
 )
+
+export default service

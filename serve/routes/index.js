@@ -42,4 +42,12 @@ module.exports = function (app) {
     app.post('/findcommentpage', (req, res) => {
         controller.findCommentPage(req, res)
     })
+
+    app.post('/signip',(req,res)=>{
+        const ip=req.ip;
+        res.send({
+            code:200,
+            ip:ip
+        })
+    })
 }
