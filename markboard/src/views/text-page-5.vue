@@ -4,9 +4,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import mynote from '@/components/com-note.vue';
 import { noteData } from "@/mock/index"
 import popcreat from '@/components/pop-create.vue'
-import mkcard from '@/components/make-card.vue'
 import popsele from '@/components/pop-sele.vue'
-import dtcard from '@/components/detail-card.vue'
 import { useRoute } from 'vue-router';
 
 let addBottom = ref(14);
@@ -49,7 +47,7 @@ onBeforeUnmount(() => {
 //对应的餐厅编号,5->0,6->1,8->2
 const defaultId=0;
 const route=useRoute();
-const id=computed(()=>route.query.id||defaultId);
+const id=computed(()=>Number(route.query.id||defaultId));
 
 const ischoose = ref(true);//默认全部选中
 
@@ -85,8 +83,7 @@ function creaChange() {
     isCreate.value=!isCreate.value;
 }
 
-const mes=ref("");
-const tex=ref("");
+
 </script>
 
 
@@ -105,11 +102,11 @@ const tex=ref("");
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
             <img class="icon" @click="creaChange()" src="../assets/fonts/add.svg">
         </div>
-        <popcreat v-model="isCreate">
-          <mkcard :id="id" v-model:mes="mes" v-model:tex="tex"></mkcard>
+        <popcreat v-model="isCreate" :id="id">
+          <!-- <mkcard :id="id" v-model:mes="mes" v-model:tex="tex"></mkcard> -->
         </popcreat>
-        <popsele v-model="isSelected">
-            <dtcard :card="noteData.data[seleindex]"></dtcard>
+        <popsele v-model="isSelected" :card="noteData.data[seleindex]">
+            <!-- <dtcard :card="noteData.data[seleindex]"></dtcard> -->
         </popsele>
     </div>
 
