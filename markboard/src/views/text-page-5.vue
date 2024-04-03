@@ -1,0 +1,181 @@
+<script setup>
+import { wallTypes, lables } from '@/utils/data';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import mynote from '@/components/com-note.vue';
+import { noteData } from "@/mock/index"
+import popcreat from '@/components/pop-create.vue'
+import mkcard from '@/components/make-card.vue'
+import popsele from '@/components/pop-sele.vue'
+import dtcard from '@/components/detail-card.vue'
+import { useRoute } from 'vue-router';
+
+let addBottom = ref(14);
+
+function scrollBottom() {
+    //距离顶部
+    let scrollTop=document.documentElement.scrollTop||document.scrollTop;
+    //屏幕高度
+    let clientHeight=document.documentElement.clientHeight;
+    //内容高度
+    let scrollHeight=document.documentElement.scrollHeight;
+    
+    if(scrollTop+clientHeight+114>=scrollHeight){
+        addBottom.value = scrollTop+clientHeight+114-scrollHeight;
+    }else{
+        addBottom.value=14;
+    }
+}
+
+let needWidth = ref(0);
+let nowWidth = window.innerWidth;
+needWidth.value = Math.floor((nowWidth - 40) / 300) * 300;
+const handleWindowResize = () => {
+    nowWidth = window.innerWidth;
+    needWidth.value = Math.floor((nowWidth - 40) / 300) * 300;
+};
+onMounted(() => {
+    //监听宽度变化
+    window.addEventListener('resize', handleWindowResize);
+    //监听屏幕滚动
+    window.addEventListener('scroll',scrollBottom);
+});
+onBeforeUnmount(() => {
+    //监听宽度变化
+    window.removeEventListener('resize', handleWindowResize);
+    //监听屏幕滚动
+    window.addEventListener('scroll',scrollBottom);
+});
+
+//对应的餐厅编号,5->0,6->1,8->2
+const defaultId=0;
+const route=useRoute();
+const id=computed(()=>route.query.id||defaultId);
+
+const ischoose = ref(true);//默认全部选中
+
+let lindex = ref(-1);//记录当前选中的标签
+
+function sstate(index) {
+    if (index >= 0) {//此时选中的是0到某个标签，所以对于“全部”的ischoose要置为false而其他的更新值
+        ischoose.value = false;
+        lindex.value = index;
+    } else {//此时选中的是“全部”标签，所以将lindex置为初始的-1
+        ischoose.value = true;
+        lindex.value = -1
+    }
+}
+
+const isCreate=ref(false);
+const isSelected=ref(false);
+const seleindex=ref(-1);
+
+function noteChange(index) {
+    if(index!=seleindex.value){
+        isCreate.value=false;
+        isSelected.value=true;
+        seleindex.value=index;
+    }else{
+        isCreate.value=false;
+        isSelected.value=false;
+        seleindex.value=-1;
+    }
+}
+function creaChange() {
+    seleindex.value=-1;
+    isCreate.value=!isCreate.value;
+}
+
+const mes=ref("");
+const tex=ref("");
+</script>
+
+
+<template>
+    <div class="textpages">
+        <p class="title">{{ wallTypes[id].name }}</p>
+        <div class="lable">
+            <p class="lable-list" :class="{ lselected: ischoose }" @click="sstate(-1)">全部</p>
+            <p class="lable-list" :class="{ lselected: lindex == index }" @click="sstate(index)"
+                v-for="(lable, index) in lables[id]" :key="lable">{{ lable }}</p>
+        </div>
+        <div class="card" :style="{ width: needWidth + 'px' }">
+            <mynote v-for="(data, index) in noteData.data" :key="data.id" :note="noteData.data[index]"
+                class="card-field" :class="{noteSelected:index==seleindex}" @click="noteChange(index)"></mynote>
+        </div>
+        <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
+            <img class="icon" @click="creaChange()" src="../assets/fonts/add.svg">
+        </div>
+        <popcreat v-model="isCreate">
+          <mkcard :id="id" v-model:mes="mes" v-model:tex="tex"></mkcard>
+        </popcreat>
+        <popsele v-model="isSelected">
+            <dtcard :card="noteData.data[seleindex]"></dtcard>
+        </popsele>
+    </div>
+
+
+</template>
+
+<style scoped>
+
+.title {
+    font-size: 50px;
+    text-align: center;
+}
+
+.lable {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: -20px;
+}
+
+.lable-list {
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    margin: 6px;
+    color: #595959;
+    border: 1px solid #ffffff;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.lselected {
+    color: #262626;
+    font-weight: 600;
+    border: 1px solid #262626;
+    border-radius: 20px;
+}
+
+.card {
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 20px;
+    margin: auto;
+}
+
+.card-field {
+    margin: 6px;
+}
+
+.add {
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+    border: #262626 2px solid;
+    border-radius: 28px;
+    position: fixed;
+    right: 30px;
+    transition: all 0.2s;
+}
+
+.icon {
+    width: 40px;
+    cursor: pointer;
+}
+.noteSelected{
+    border: 1px solid #13c2c2;
+}
+</style>
