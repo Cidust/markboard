@@ -2,4 +2,4 @@ import service from '@/utils/axios'
 
 export const signIpApi = () => { return service.post('/signip') }
 
-export const insertNoteApi = (data) => { service.post('/insertnote', data) }
+export const insertNoteApi = (data) => { return service.post('/insertnote', data) }

@@ -90,6 +90,9 @@ function creaChange() {
     isCreate.value=!isCreate.value;
 }
 
+function creaNote(e) {
+    console.log(e);
+}
 
 </script>
 
@@ -109,7 +112,7 @@ function creaChange() {
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
             <img class="icon" @click="creaChange()" src="../assets/fonts/add.svg">
         </div>
-        <popcreat v-model="isCreate" :id="id">
+        <popcreat v-model="isCreate" :id="id" @clickbt="creaNote">
           <!-- <mkcard :id="id" v-model:mes="mes" v-model:tex="tex"></mkcard> -->
         </popcreat>
         <popsele v-model="isSelected" :card="noteData.data[seleindex]">

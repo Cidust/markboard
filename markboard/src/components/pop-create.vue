@@ -6,6 +6,8 @@ import { useRoute } from "vue-router";
 import { useUserIpStore } from "@/stores/userIp";
 import { lables } from '@/utils/data';
 import { cardOriginColor, cardColor } from '@/utils/data';
+import { insertNoteApi } from "@/api";
+import { ElMessage } from "element-plus";
 
 const mes=ref("");
 const tex=ref("");
@@ -39,21 +41,29 @@ function drop() {
 const route = useRoute();
 const rest = computed(() => route.query.id || 0);
 const userIp = useUserIpStore();
+const emit = defineEmits(['clickbt']);
+ElMessage.error('这个实际上没有用到，只是初始化，否则可能存在第一次点击不会弹出消息的问题');
 function submit() {
     let name = '匿名';
     if (tex.value) {
-        name = tex;
+        name = tex.value;
     }
     let data = {
-        rest: rest,
-        message: mes,
+        rest: rest.value,
+        message: mes.value,
         name: name,
         userId: userIp.ip,
         moment: new Date(),
-        label: lableSelected,
-        color: colorSelected
+        label: lableSelected.value,
+        color: colorSelected.value
     }
+    ElMessage.success('感谢您的留言，请耐心等待后端响应...') 
     console.log(data);
+    insertNoteApi(data).then((res)=>{
+        console.log(res);
+        mes.value='';
+        emit('clickbt',data);
+    })
 }
 
 
@@ -318,4 +328,4 @@ function aipTest() {
 #windows{
     margin-top: 24px;
 }
-</style>@/stores/userIp
+</style>
