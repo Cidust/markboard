@@ -92,7 +92,7 @@ exports.deleteComment = async (req, res) => {
 //分页查询note并获取各项数据
 exports.findNotePage=async(req,res)=>{
     let data=req.body;
-    await dbModel.findNotePage(data.page,data.pagesize,data.label).then(async result=>{
+    await dbModel.findNotePage(data.page,data.pagesize,data.rest,data.label).then(async result=>{
         for(let i=0;i<result.length;i++){
             //查询相应的喜欢和举报的数据
             //点赞
