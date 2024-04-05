@@ -99,7 +99,7 @@ function noNoteCheck() {
     
 }
 
-const isLoad = ref(false)
+const isLoading = ref(false)
 
 </script>
 
@@ -119,9 +119,12 @@ const isLoad = ref(false)
         </div>
 
         <!-- 当不存在卡片的时候展示 -->
-        <div class="none-note" v-if="!isNoNote">
+        <div class="none-note" v-if="isNoNote">
             <p>还没有评价哦！</p>
         </div>
+
+        <!-- 加载的动画 -->
+        <div class="anima" v-loading="isLoading"></div>
 
         <!-- 创建或者选中一张卡片 -->
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
@@ -213,5 +216,9 @@ const isLoad = ref(false)
     font-weight: 700;
     font-size: 24px;
     color: #595959;
+}
+
+.anima{
+    margin-top: 30px;
 }
 </style>
