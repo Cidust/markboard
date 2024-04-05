@@ -7,6 +7,8 @@ import popcreat from '@/components/pop-create.vue'
 import popsele from '@/components/pop-sele.vue'
 import { useRoute } from 'vue-router';
 import { watch } from 'vue';
+import { findNotePageApi } from '@/api';
+import { useUserIpStore } from '@/stores/userIp';
 
 let addBottom = ref(14);
 
@@ -94,13 +96,46 @@ function creaNote(e) {
     console.log(e);
 }
 
-const isNoNote = ref(false)
-function noNoteCheck() {
-    
+const isNoNote = ref(true)
+
+const isLoad = ref(false)
+
+const cards=ref([]);
+const page=ref(1);
+const pagesize=ref(5);
+const userIp = useUserIpStore();
+
+function getNoteCard() {
+    // page>0时执行
+    if(page.value>0){
+        let data={
+            rest:id.value,
+            page:page.value,
+            pagesize:pagesize.value,
+            userId:userIp.ip,
+            lable:lindex.value
+        }
+        console.log(data);
+        findNotePageApi(data).then((res)=>{
+            cards.value=cards.value.concat(res.message);
+            console.log(res.message);
+            if(res.message.length){
+                page.value++;
+            }else{
+                page.value=0;
+            }
+            setTimeout(() => {
+                if(cards.value.length>0){
+                    isNoNote.value=false;
+                }else{
+                    isNoNote.value=true;
+                }
+            }, 10);
+        })
+    }
 }
 
-const isLoading = ref(false)
-
+onMounted(getNoteCard);
 </script>
 
 
@@ -114,7 +149,7 @@ const isLoading = ref(false)
                 v-for="(lable, index) in lables[id]" :key="lable">{{ lable }}</p>
         </div>
         <div class="card" :style="{ width: needWidth + 'px' }">
-            <mynote v-for="(data, index) in noteData.data" :key="data.id" :note="noteData.data[index]"
+            <mynote v-for="(data, index) in cards" :key="data.id" :note="cards[index]"
                 class="card-field" :class="{ noteSelected: index == seleindex }" @click="noteChange(index)"></mynote>
         </div>
 
@@ -124,7 +159,7 @@ const isLoading = ref(false)
         </div>
 
         <!-- 加载的动画 -->
-        <div class="anima" v-loading="isLoading"></div>
+        <div class="anima" v-loading="isLoad"></div>
 
         <!-- 创建或者选中一张卡片 -->
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
@@ -133,7 +168,7 @@ const isLoading = ref(false)
         <popcreat v-model="isCreate" :id="id" @clickbt="creaNote">
             <!-- <mkcard :id="id" v-model:mes="mes" v-model:tex="tex"></mkcard> -->
         </popcreat>
-        <popsele v-model="isSelected" :card="noteData.data[seleindex]">
+        <popsele v-model="isSelected" :card="cards[seleindex]">
             <!-- <dtcard :card="noteData.data[seleindex]"></dtcard> -->
         </popsele>
     </div>

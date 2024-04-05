@@ -137,7 +137,9 @@ exports.findNotePage = (page, pagesize, rest, label) => {
     let _sql;
     //当选择的是“全部”时
     if (label == -1) {
-        _sql = `select * from notes where rest="${rest}" order by id desc limit ${(page - 1) * pagesize},${pagesize};`
+        // _sql = `select * from notes where rest="${rest}" order by id desc limit ${(page - 1) * pagesize},${pagesize};`
+        _sql = `select * from notes;`
+       
     } else {
         _sql = `select * from notes where rest="${rest}" and label="${label}" order by id desc limit ${(page - 1) * pagesize},${pagesize};`
     }
@@ -160,4 +162,5 @@ exports.commentCount = (nid) => {
 }
 exports.likeCount=(nid,uid)=>{
     let _sql=`select count(*) as count from feedbacks where noteId="${nid}" and userId="${uid}" and type=0;`
+    return query(_sql);
 }

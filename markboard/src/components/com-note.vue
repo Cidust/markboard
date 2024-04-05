@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, ref } from 'vue';
+import { computed, defineProps, onMounted, ref } from 'vue';
 import { myDate } from '@/utils/method';
 import { cardColor } from '@/utils/data';
 
@@ -15,6 +15,8 @@ function handleLeave() {
     likeCurrent.value = likeGray
 }
 
+
+
 const card = computed(() => props.note)
 
 const props = defineProps({
@@ -27,10 +29,18 @@ const props = defineProps({
         default: () => ({}),
     }
 })
+
+
+const likeChange = () => {
+    if (card.value.islike[0].count>0) {
+        likeCurrent.value = likeRed
+    }
+}
+onMounted(()=>likeChange())
 </script>
 
 <template>
-    <div class="mynote" :style="{ width: props.width, background: cardColor[card.imgurl] }">
+    <div class="mynote" :style="{ width: props.width, background: cardColor[card.color] }">
         <div class="head">
             <p class="time">{{ myDate(card.moment) }}</p>
             <p class="label">{{ card.label }}</p>
@@ -39,12 +49,13 @@ const props = defineProps({
         <div class="foot">
             <div class="foot-left">
                 <div class="foot-parts">
-                    <img class="icon" id="like-icon" :src="likeCurrent" @mouseover="handleHover()" @mouseleave="handleLeave()">
-                    <span class="values">{{ card.like }}</span>
+                    <img class="icon like-icon" :src="likeCurrent" :class="{ islike: card.islike[0].count > 0 }"
+                        @mouseover="handleHover()" @mouseleave="handleLeave()">
+                    <span class="values">{{ card.like[0].count }}</span>
                 </div>
                 <div class="foot-parts">
                     <img class="icon" src="../assets/fonts/chat.svg">
-                    <span class="values">{{ card.comment }}</span>
+                    <span class="values">{{ card.comcount[0].count }}</span>
                 </div>
             </div>
             <div class="name">{{ card.name }}</div>
@@ -94,7 +105,8 @@ const props = defineProps({
     width: 16px;
     cursor: pointer;
 }
-#like-icon{
+
+.like-icon {
     width: 18px;
     cursor: pointer;
 }

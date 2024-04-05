@@ -92,7 +92,10 @@ exports.deleteComment = async (req, res) => {
 //分页查询note并获取各项数据
 exports.findNotePage=async(req,res)=>{
     let data=req.body;
-    await dbModel.findNotePage(data.page,data.pagesize,data.rest,data.label).then(async result=>{
+    console.log(data);
+    await dbModel.findNotePage(data.page,data.pagesize,data.rest,data.lable).then((res)=>{console.log(res)})
+    await dbModel.findNotePage(data.page,data.pagesize,data.rest,data.lable)
+    .then(async (result)=>{
         for(let i=0;i<result.length;i++){
             //查询相应的喜欢和举报的数据
             //点赞
@@ -103,6 +106,8 @@ exports.findNotePage=async(req,res)=>{
             result[i].islike = await dbModel.likeCount(result[i].id,data.userId);
             //评论的数量
             result[i].comcount =await dbModel.commentCount(result[i].id);
+
+            // console.log(result.length);
         }
         res.send({
             code:200,
