@@ -12,16 +12,16 @@ let addBottom = ref(14);
 
 function scrollBottom() {
     //距离顶部
-    let scrollTop=document.documentElement.scrollTop||document.scrollTop;
+    let scrollTop = document.documentElement.scrollTop || document.scrollTop;
     //屏幕高度
-    let clientHeight=document.documentElement.clientHeight;
+    let clientHeight = document.documentElement.clientHeight;
     //内容高度
-    let scrollHeight=document.documentElement.scrollHeight;
-    
-    if(scrollTop+clientHeight+114>=scrollHeight){
-        addBottom.value = scrollTop+clientHeight+114-scrollHeight;
-    }else{
-        addBottom.value=14;
+    let scrollHeight = document.documentElement.scrollHeight;
+
+    if (scrollTop + clientHeight + 114 >= scrollHeight) {
+        addBottom.value = scrollTop + clientHeight + 114 - scrollHeight;
+    } else {
+        addBottom.value = 14;
     }
 }
 
@@ -36,24 +36,24 @@ onMounted(() => {
     //监听宽度变化
     window.addEventListener('resize', handleWindowResize);
     //监听屏幕滚动
-    window.addEventListener('scroll',scrollBottom);
+    window.addEventListener('scroll', scrollBottom);
 });
 onBeforeUnmount(() => {
     //监听宽度变化
     window.removeEventListener('resize', handleWindowResize);
     //监听屏幕滚动
-    window.addEventListener('scroll',scrollBottom);
+    window.addEventListener('scroll', scrollBottom);
 });
 
 //对应的餐厅编号,5->0,6->1,8->2
-const defaultId=0;
-const route=useRoute();
-const id=computed(()=>Number(route.query.id||defaultId));
+const defaultId = 0;
+const route = useRoute();
+const id = computed(() => Number(route.query.id || defaultId));
 
 //如若界面更改至别的餐厅，则目前的打开的界面需要关闭
-watch(id,()=>{
-    isCreate.value=false;
-    isSelected.value=false;
+watch(id, () => {
+    isCreate.value = false;
+    isSelected.value = false;
 })
 
 const ischoose = ref(true);//默认全部选中
@@ -70,35 +70,43 @@ function sstate(index) {
     }
 }
 
-const isCreate=ref(false);
-const isSelected=ref(false);
-const seleindex=ref(-1);
+const isCreate = ref(false);
+const isSelected = ref(false);
+const seleindex = ref(-1);
 
 function noteChange(index) {
-    if(index!=seleindex.value){
-        isCreate.value=false;
-        isSelected.value=true;
-        seleindex.value=index;
-    }else{
-        isCreate.value=false;
-        isSelected.value=false;
-        seleindex.value=-1;
+    if (index != seleindex.value) {
+        isCreate.value = false;
+        isSelected.value = true;
+        seleindex.value = index;
+    } else {
+        isCreate.value = false;
+        isSelected.value = false;
+        seleindex.value = -1;
     }
 }
 function creaChange() {
-    seleindex.value=-1;
-    isCreate.value=!isCreate.value;
+    seleindex.value = -1;
+    isCreate.value = !isCreate.value;
 }
 
 function creaNote(e) {
     console.log(e);
 }
 
+const isNoNote = ref(false)
+function noNoteCheck() {
+    
+}
+
+const isLoad = ref(false)
+
 </script>
 
 
 <template>
     <div class="textpages">
+        <!-- 标题、窗口、note本体 -->
         <p class="title">{{ wallTypes[id].name }}</p>
         <div class="lable">
             <p class="lable-list" :class="{ lselected: ischoose }" @click="sstate(-1)">全部</p>
@@ -107,13 +115,20 @@ function creaNote(e) {
         </div>
         <div class="card" :style="{ width: needWidth + 'px' }">
             <mynote v-for="(data, index) in noteData.data" :key="data.id" :note="noteData.data[index]"
-                class="card-field" :class="{noteSelected:index==seleindex}" @click="noteChange(index)"></mynote>
+                class="card-field" :class="{ noteSelected: index == seleindex }" @click="noteChange(index)"></mynote>
         </div>
+
+        <!-- 当不存在卡片的时候展示 -->
+        <div class="none-note" v-if="!isNoNote">
+            <p>还没有评价哦！</p>
+        </div>
+
+        <!-- 创建或者选中一张卡片 -->
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
             <img class="icon" @click="creaChange()" src="../assets/fonts/add.svg">
         </div>
         <popcreat v-model="isCreate" :id="id" @clickbt="creaNote">
-          <!-- <mkcard :id="id" v-model:mes="mes" v-model:tex="tex"></mkcard> -->
+            <!-- <mkcard :id="id" v-model:mes="mes" v-model:tex="tex"></mkcard> -->
         </popcreat>
         <popsele v-model="isSelected" :card="noteData.data[seleindex]">
             <!-- <dtcard :card="noteData.data[seleindex]"></dtcard> -->
@@ -124,7 +139,6 @@ function creaNote(e) {
 </template>
 
 <style scoped>
-
 .title {
     font-size: 50px;
     text-align: center;
@@ -182,7 +196,22 @@ function creaNote(e) {
     width: 40px;
     cursor: pointer;
 }
-.noteSelected{
+
+.noteSelected {
     border: 1px solid #13c2c2;
+}
+
+.none-note{
+    width: 100%;
+    text-align: center;
+    padding-top: 80px;
+    position: absolute;
+    top: 280px;
+}
+
+.none-note p{
+    font-weight: 700;
+    font-size: 24px;
+    color: #595959;
 }
 </style>
