@@ -92,8 +92,7 @@ exports.deleteComment = async (req, res) => {
 //分页查询note并获取各项数据
 exports.findNotePage=async(req,res)=>{
     let data=req.body;
-    console.log(data);
-    await dbModel.findNotePage(data.page,data.pagesize,data.rest,data.lable).then((res)=>{console.log(res)})
+    // console.log(data);
     await dbModel.findNotePage(data.page,data.pagesize,data.rest,data.lable)
     .then(async (result)=>{
         for(let i=0;i<result.length;i++){

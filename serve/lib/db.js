@@ -137,8 +137,8 @@ exports.findNotePage = (page, pagesize, rest, label) => {
     let _sql;
     //当选择的是“全部”时
     if (label == -1) {
-        // _sql = `select * from notes where rest="${rest}" order by id desc limit ${(page - 1) * pagesize},${pagesize};`
-        _sql = `select * from notes;`
+        _sql = `select * from notes where rest="${rest}" order by id desc limit ${(page - 1) * pagesize},${pagesize};`
+        // _sql = `select * from notes;`
        
     } else {
         _sql = `select * from notes where rest="${rest}" and label="${label}" order by id desc limit ${(page - 1) * pagesize},${pagesize};`

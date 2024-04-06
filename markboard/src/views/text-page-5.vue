@@ -66,9 +66,21 @@ function sstate(index) {
     if (index >= 0) {//此时选中的是0到某个标签，所以对于“全部”的ischoose要置为false而其他的更新值
         ischoose.value = false;
         lindex.value = index;
+        // 重置page
+        page.value = 1;
+        // 先清空所有的note
+        cards.value = [];
+        // 然后再重新获取当前选中的标签
+        getNoteCard();
     } else {//此时选中的是“全部”标签，所以将lindex置为初始的-1
         ischoose.value = true;
         lindex.value = -1
+        // 重置page
+        page.value = 1;
+        // 先清空所有的note
+        cards.value = [];
+        // 然后再重新获取当前选中的标签
+        getNoteCard();
     }
 }
 
@@ -100,35 +112,38 @@ const isNoNote = ref(true)
 
 const isLoad = ref(false)
 
-const cards=ref([]);
-const page=ref(1);
-const pagesize=ref(5);
+const cards = ref([]);
+const page = ref(1);
+const pagesize = ref(5);
 const userIp = useUserIpStore();
 
 function getNoteCard() {
     // page>0时执行
-    if(page.value>0){
-        let data={
-            rest:id.value,
-            page:page.value,
-            pagesize:pagesize.value,
-            userId:userIp.ip,
-            lable:lindex.value
+    if (page.value > 0) {
+        isLoad.value = true;
+        let data = {
+            rest: id.value,
+            page: page.value,
+            pagesize: pagesize.value,
+            userId: userIp.ip,
+            lable: lindex.value
         }
         console.log(data);
-        findNotePageApi(data).then((res)=>{
-            cards.value=cards.value.concat(res.message);
+        findNotePageApi(data).then((res) => {
+            cards.value = cards.value.concat(res.message);
             console.log(res.message);
-            if(res.message.length){
+            if (res.message.length) {
                 page.value++;
-            }else{
-                page.value=0;
+            } else {
+                page.value = 0;
             }
             setTimeout(() => {
-                if(cards.value.length>0){
-                    isNoNote.value=false;
-                }else{
-                    isNoNote.value=true;
+                if (cards.value.length > 0) {
+                    isNoNote.value = false;
+                    isLoad.value = false;
+                } else {
+                    isNoNote.value = true;
+                    isLoad.value = false;
                 }
             }, 10);
         })
@@ -149,8 +164,8 @@ onMounted(getNoteCard);
                 v-for="(lable, index) in lables[id]" :key="lable">{{ lable }}</p>
         </div>
         <div class="card" :style="{ width: needWidth + 'px' }">
-            <mynote v-for="(data, index) in cards" :key="data.id" :note="cards[index]"
-                class="card-field" :class="{ noteSelected: index == seleindex }" @click="noteChange(index)"></mynote>
+            <mynote v-for="(data, index) in cards" :key="data.id" :note="cards[index]" class="card-field"
+                :class="{ noteSelected: index == seleindex }" @click="noteChange(index)"></mynote>
         </div>
 
         <!-- 当不存在卡片的时候展示 -->
@@ -158,8 +173,13 @@ onMounted(getNoteCard);
             <p>还没有评价哦！</p>
         </div>
 
-        <!-- 加载的动画 -->
-        <div class="anima" v-loading="isLoad"></div>
+        <!-- 加载的动画
+        <div class="anima">
+            <div v-loading="!isLoad"></div>
+        </div> -->
+
+        <!-- 底部的提示 -->
+        <p class="bottom-tip"  v-loading="isLoad">没有更多啦</p>
 
         <!-- 创建或者选中一张卡片 -->
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
@@ -239,21 +259,26 @@ onMounted(getNoteCard);
     border: 1px solid #13c2c2;
 }
 
-.none-note{
+.none-note {
     width: 100%;
     text-align: center;
-    padding-top: 80px;
+    margin-top: 200px;
     position: absolute;
     top: 280px;
 }
 
-.none-note p{
+.none-note p {
     font-weight: 700;
     font-size: 24px;
     color: #595959;
 }
 
-.anima{
-    margin-top: 30px;
+.bottom-tip {
+    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    color: #595959;
+    text-align: center;
+    font-size: 16px;
 }
 </style>
