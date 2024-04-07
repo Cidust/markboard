@@ -26,7 +26,7 @@ function scrollBottom() {
         addBottom.value = 14;
     }
 
-    if (scrollTop + clientHeight == scrollHeight) {
+    if (scrollTop + clientHeight + 100 >= scrollHeight) {
         getNoteCard();
     }
 }
@@ -118,7 +118,7 @@ function creaNote(e) {
 
 const isNoNote = ref(true)
 
-const isLoad = ref(false)
+const isNomore = ref(true)
 
 const cards = ref([]);
 const page = ref(1);
@@ -128,7 +128,7 @@ const userIp = useUserIpStore();
 function getNoteCard() {
     // page>0时执行
     if (page.value > 0) {
-        isLoad.value = true;
+        isNomore.value = false;
         let data = {
             rest: id.value,
             page: page.value,
@@ -140,14 +140,19 @@ function getNoteCard() {
         findNotePageApi(data).then((res) => {
             cards.value = cards.value.concat(res.message);
             // console.log(res.message);
-            if (cards.value.length > 0) {
+            if (res.message.length) {
                 page.value++;
-                isNoNote.value = false;
-                isLoad.value = false;
             } else {
                 page.value = 0;
+            }
+            if (cards.value.length > 0) {
+                isNoNote.value = false;
+                if(page.value==0){
+                    isNomore.value=true;
+                }
+            } else {
                 isNoNote.value = true;
-                isLoad.value = false;
+                isNomore.value = true;
             }
         })
     }
@@ -182,7 +187,11 @@ onMounted(getNoteCard);
         </div> -->
 
         <!-- 底部的提示 -->
-        <p class="bottom-tip" v-loading="isLoad">没有更多啦</p>
+        <div class="bottom-tip">
+            <p class="nomore" v-if="isNomore">没有更多啦</p>
+            <p v-loading="!isNomore"></p>
+        </div>
+     
 
         <!-- 创建或者选中一张卡片 -->
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
@@ -278,8 +287,10 @@ onMounted(getNoteCard);
 
 .bottom-tip {
     margin: 0;
-    margin-top: 20px;
-    margin-bottom: 50px;
+    margin-top: 100px;
+    margin-bottom: 20px;
+}
+.nomore{
     color: #595959;
     text-align: center;
     font-size: 16px;
