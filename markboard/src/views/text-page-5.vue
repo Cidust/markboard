@@ -26,7 +26,7 @@ function scrollBottom() {
         addBottom.value = 14;
     }
 
-    if(scrollTop + clientHeight==scrollHeight){
+    if (scrollTop + clientHeight == scrollHeight) {
         getNoteCard();
     }
 }
@@ -140,20 +140,15 @@ function getNoteCard() {
         findNotePageApi(data).then((res) => {
             cards.value = cards.value.concat(res.message);
             // console.log(res.message);
-            if (res.message.length) {
+            if (cards.value.length > 0) {
                 page.value++;
+                isNoNote.value = false;
+                isLoad.value = false;
             } else {
                 page.value = 0;
+                isNoNote.value = true;
+                isLoad.value = false;
             }
-            setTimeout(() => {
-                if (cards.value.length > 0) {
-                    isNoNote.value = false;
-                    isLoad.value = false;
-                } else {
-                    isNoNote.value = true;
-                    isLoad.value = false;
-                }
-            }, 10);
         })
     }
 }
@@ -187,7 +182,7 @@ onMounted(getNoteCard);
         </div> -->
 
         <!-- 底部的提示 -->
-        <p class="bottom-tip"  v-loading="isLoad">没有更多啦</p>
+        <p class="bottom-tip" v-loading="isLoad">没有更多啦</p>
 
         <!-- 创建或者选中一张卡片 -->
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
