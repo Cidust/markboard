@@ -25,6 +25,10 @@ function scrollBottom() {
     } else {
         addBottom.value = 14;
     }
+
+    if(scrollTop + clientHeight==scrollHeight){
+        getNoteCard();
+    }
 }
 
 let needWidth = ref(0);
@@ -105,7 +109,11 @@ function creaChange() {
 }
 
 function creaNote(e) {
-    console.log(e);
+    // console.log(e);
+    // 将新创建的卡片放到后面
+    cards.value.unshift(e);
+    // 关闭创造框
+    creaChange();
 }
 
 const isNoNote = ref(true)
@@ -128,10 +136,10 @@ function getNoteCard() {
             userId: userIp.ip,
             lable: lindex.value
         }
-        console.log(data);
+        // console.log(data);
         findNotePageApi(data).then((res) => {
             cards.value = cards.value.concat(res.message);
-            console.log(res.message);
+            // console.log(res.message);
             if (res.message.length) {
                 page.value++;
             } else {

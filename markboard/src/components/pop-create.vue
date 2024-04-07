@@ -9,8 +9,8 @@ import { cardOriginColor, cardColor } from '@/utils/data';
 import { insertNoteApi } from "@/api";
 import { ElMessage } from "element-plus";
 
-const mes=ref("");
-const tex=ref("");
+const mes = ref("");
+const tex = ref("");
 
 const crea = defineModel({
     default: false
@@ -31,18 +31,17 @@ function lableChange(index) {
 }
 
 function drop() {
-    crea.value=!crea.value;
-    lableSelected.value=0;
-    colorSelected.value=0;
-    mes.value='';
-    tex.value='';
+    crea.value = !crea.value;
+    lableSelected.value = 0;
+    colorSelected.value = 0;
+    mes.value = '';
+    tex.value = '';
 }
 
 const route = useRoute();
 const rest = computed(() => route.query.id || 0);
 const userIp = useUserIpStore();
 const emit = defineEmits(['clickbt']);
-ElMessage.error('这个实际上没有用到，只是初始化，否则可能存在第一次点击不会弹出消息的问题');
 function submit() {
     let name = '匿名';
     if (tex.value) {
@@ -57,12 +56,28 @@ function submit() {
         label: lableSelected.value,
         color: colorSelected.value
     }
-    ElMessage.success('感谢您的留言，请耐心等待后端响应...') 
-    console.log(data);
-    insertNoteApi(data).then((res)=>{
-        console.log(res);
+
+    
+    // console.log(data);
+    insertNoteApi(data).then((res) => {
+        // console.log(res);
+        let cardData = {
+            rest: rest.value,
+            message: mes.value,
+            name: name,
+            userId: userIp.ip,
+            moment: new Date(),
+            label: lableSelected.value,
+            color: colorSelected.value,
+            id:res.message.insertId,
+            comcount:[{count:0}],
+            islike:[{count:0}],
+            like:[{count:0}],
+            report:[{count:0}],
+        }
+        ElMessage.success('成功！感谢您的留言！')
+        emit('clickbt', cardData);
         mes.value='';
-        emit('clickbt',data);
     })
 }
 
@@ -226,6 +241,7 @@ function aipTest() {
     width: 200px;
     cursor: pointer;
 }
+
 .colors {
     width: 100%;
     display: flex;
@@ -325,7 +341,7 @@ function aipTest() {
     margin-top: 24px;
 }
 
-#windows{
+#windows {
     margin-top: 24px;
 }
 </style>

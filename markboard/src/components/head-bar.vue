@@ -45,7 +45,7 @@ function idChange(n) {
     backdrop-filter: blur(10px);
     position: fixed;
     top: 0;
-    z-index: 9999;
+    z-index: 20;
 }
 
 #headicon {
