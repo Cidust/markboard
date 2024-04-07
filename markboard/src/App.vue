@@ -1,9 +1,3 @@
 <template>
-  <router-view class="root"></router-view>
+  <router-view></router-view>
 </template>
-
-<style>
-.root {
-  min-height: 1150px;
-}
-</style>

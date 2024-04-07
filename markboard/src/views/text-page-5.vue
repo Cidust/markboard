@@ -1,6 +1,6 @@
 <script setup>
 import { wallTypes, lables } from '@/utils/data';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, ref } from 'vue';
 import mynote from '@/components/com-note.vue';
 import { noteData } from "@/mock/index"
 import popcreat from '@/components/pop-create.vue'
@@ -25,8 +25,8 @@ function scrollBottom() {
     } else {
         addBottom.value = 14;
     }
-
-    if (scrollTop + clientHeight + 100 >= scrollHeight) {
+    //刷新
+    if (scrollTop + clientHeight + 150 >= scrollHeight) {
         getNoteCard();
     }
 }
@@ -38,6 +38,8 @@ const handleWindowResize = () => {
     nowWidth = window.innerWidth;
     needWidth.value = Math.floor((nowWidth - 40) / 300) * 300;
 };
+
+
 onMounted(() => {
     //监听宽度变化
     window.addEventListener('resize', handleWindowResize);
@@ -48,7 +50,7 @@ onBeforeUnmount(() => {
     //监听宽度变化
     window.removeEventListener('resize', handleWindowResize);
     //监听屏幕滚动
-    window.addEventListener('scroll', scrollBottom);
+    window.removeEventListener('scroll', scrollBottom);
 });
 
 //对应的餐厅编号,5->0,6->1,8->2
@@ -120,6 +122,8 @@ const isNoNote = ref(true)
 
 const isNomore = ref(true)
 
+const isAnima = ref(false)
+
 const cards = ref([]);
 const page = ref(1);
 const pagesize = ref(5);
@@ -147,12 +151,14 @@ function getNoteCard() {
             }
             if (cards.value.length > 0) {
                 isNoNote.value = false;
-                if(page.value==0){
-                    isNomore.value=true;
+                isAnima.value=false;
+                if (page.value == 0) {
+                    isNomore.value = true;
                 }
             } else {
                 isNoNote.value = true;
-                isNomore.value = true;
+                isNomore.value = false;
+                isAnima.value=true;
             }
         })
     }
@@ -189,9 +195,9 @@ onMounted(getNoteCard);
         <!-- 底部的提示 -->
         <div class="bottom-tip">
             <p class="nomore" v-if="isNomore">没有更多啦</p>
-            <p v-loading="!isNomore"></p>
+            <p v-loading="!(isNomore||isAnima)"></p>
         </div>
-     
+
 
         <!-- 创建或者选中一张卡片 -->
         <div class="add" :style="{ bottom: addBottom + 'px' }" v-if="!isCreate">
@@ -290,7 +296,8 @@ onMounted(getNoteCard);
     margin-top: 100px;
     margin-bottom: 20px;
 }
-.nomore{
+
+.nomore {
     color: #595959;
     text-align: center;
     font-size: 16px;

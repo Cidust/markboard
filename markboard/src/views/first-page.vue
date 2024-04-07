@@ -24,7 +24,7 @@ onMounted(() => { getUser() });
 
 <style scoped>
 #main {
-    min-height: 1000px;
+    min-height: 700px;
     margin-top: 100px;
 }
 </style>
