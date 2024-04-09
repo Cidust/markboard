@@ -179,7 +179,7 @@ onMounted(getNoteCard);
         </div>
         <div class="card" :style="{ width: needWidth + 'px' }">
             <mynote v-for="(data, index) in cards" :key="data.id" :note="cards[index]" class="card-field"
-                :class="{ noteSelected: index == seleindex }" @click="noteChange(index)"></mynote>
+                :class="{ noteSelected: index == seleindex }" @toDetail="noteChange(index)"></mynote>
         </div>
 
         <!-- 当不存在卡片的时候展示 -->

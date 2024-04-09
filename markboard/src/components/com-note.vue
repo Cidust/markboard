@@ -37,6 +37,12 @@ const likeChange = () => {
     }
 }
 onMounted(()=>likeChange())
+
+// 通知父组件打开详情
+const emit = defineEmits(['toDetail']);
+function toDetail(){
+    emit('toDetail');
+}
 </script>
 
 <template>
@@ -45,7 +51,7 @@ onMounted(()=>likeChange())
             <p class="time">{{ myDate(card.moment) }}</p>
             <p class="label">{{ card.label }}</p>
         </div>
-        <p class="field">{{ card.message }}</p>
+        <p class="field" @click="toDetail">{{ card.message }}</p>
         <div class="foot">
             <div class="foot-left">
                 <div class="foot-parts">

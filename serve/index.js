@@ -10,7 +10,7 @@ const app = express();
 app.use(express.static(__dirname + '/views'));
 
 app.use(cors({
-    origin: ['http://localhost:5173','http://10.114.177.31:5173'],
+    origin: ['http://localhost:5173','http://10.118.149.55:5173'],
     methods: ['POST'],
     allowedHeaders: ['Content-Type'],
 }));
