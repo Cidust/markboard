@@ -2,6 +2,8 @@
 import { computed, defineProps, onMounted, ref } from 'vue';
 import { myDate } from '@/utils/method';
 import { cardColor } from '@/utils/data';
+import { insertFeedbackApi } from '@/api';
+import { useUserIpStore } from '@/stores/userIp';
 
 const likeGray = 'src/assets/fonts/love.svg';
 const likeRed = 'src/assets/fonts/love-red.svg';
@@ -32,16 +34,39 @@ const props = defineProps({
 
 
 const likeChange = () => {
-    if (card.value.islike[0].count>0) {
+    if (card.value.islike[0].count > 0) {
         likeCurrent.value = likeRed
     }
 }
-onMounted(()=>likeChange())
+onMounted(() => likeChange())
+// onMounted(()=>{console.log(card.value)})
 
 // 通知父组件打开详情
 const emit = defineEmits(['toDetail']);
-function toDetail(){
+function toDetail() {
     emit('toDetail');
+}
+
+// 点赞
+const userIp = useUserIpStore();
+function clickLike() {
+    // 当islike等于0的时候再去进行点赞
+    console.log(card.value.islike[0].count);
+    if (card.value.islike[0].count == 0) {
+        let data = {
+            noteId: card.value.id,
+            userId: userIp.ip,
+            type: 0,
+            moment: new Date(),
+        }
+        insertFeedbackApi(data).then(() => {
+            // 点赞总数+1
+            card.value.like[0].count++;
+            // 该用户点赞
+            card.value.islike[0].count++;
+        })
+    }
+    console.log(card.value.islike[0].count);
 }
 </script>
 
@@ -55,11 +80,11 @@ function toDetail(){
         <div class="foot">
             <div class="foot-left">
                 <div class="foot-parts">
-                    <img class="icon like-icon" :src="likeCurrent" :class="{ islike: card.islike[0].count > 0 }"
-                        @mouseover="handleHover()" @mouseleave="handleLeave()">
+                    <img class="icon like-icon" :src="likeCurrent" :class="{ islike: (card.islike[0].count > 0) }"
+                        @mouseover="handleHover()" @mouseleave="handleLeave()" @click="clickLike">
                     <span class="values">{{ card.like[0].count }}</span>
                 </div>
-                <div class="foot-parts">
+                <div class="foot-parts" v-show="card.comcount[0].count > 0">
                     <img class="icon" src="../assets/fonts/chat.svg">
                     <span class="values">{{ card.comcount[0].count }}</span>
                 </div>

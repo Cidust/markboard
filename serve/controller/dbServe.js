@@ -39,6 +39,7 @@ exports.insertFeedback = async (req, res) => {
             code: 200,
             message: result
         })
+        console.log(req);
     })
 }
 
@@ -106,7 +107,9 @@ exports.findNotePage=async(req,res)=>{
             //评论的数量
             result[i].comcount =await dbModel.commentCount(result[i].id);
 
-            // console.log(result.length);
+            console.log(data);
+            console.log(result[i].id);
+            console.log(data.userId);
         }
         res.send({
             code:200,

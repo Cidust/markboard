@@ -10,11 +10,11 @@ import router from './router'
 import VueAxios from 'vue-axios'
 import axios from 'axios'
 
-
+const pinia = createPinia()
 const app = createApp(App)
 
 app.use(VueAxios, axios);
-app.use(createPinia())
+app.use(pinia)
 app.use(ElementPlus);
 app.use(router);
 

@@ -7,7 +7,7 @@ import popcreat from '@/components/pop-create.vue'
 import popsele from '@/components/pop-sele.vue'
 import { useRoute } from 'vue-router';
 import { watch } from 'vue';
-import { findNotePageApi } from '@/api';
+import { findNotePageApi, signIpApi } from '@/api';
 import { useUserIpStore } from '@/stores/userIp';
 
 let addBottom = ref(14);
@@ -127,7 +127,19 @@ const isAnima = ref(false)
 const cards = ref([]);
 const page = ref(1);
 const pagesize = ref(5);
+
+// 获取ip
 const userIp = useUserIpStore();
+
+async function getUser() {
+    await signIpApi().then((res)=>{
+        userIp.setUserIp(res.ip);
+    });
+    // console.log(res.ip);
+   
+    // console.log('ip初始化阶段测试'+userIp.ip)
+}
+
 
 function getNoteCard() {
     // page>0时执行
@@ -140,10 +152,10 @@ function getNoteCard() {
             userId: userIp.ip,
             lable: lindex.value
         }
-        // console.log(data);
+         console.log(userIp.ip);
         findNotePageApi(data).then((res) => {
             cards.value = cards.value.concat(res.message);
-            // console.log(res.message);
+            console.log(cards.value);
             if (res.message.length) {
                 page.value++;
             } else {
@@ -164,7 +176,12 @@ function getNoteCard() {
     }
 }
 
-onMounted(getNoteCard);
+async function initialWindow(){
+    await getUser();
+    getNoteCard();
+}
+
+onMounted(()=>{initialWindow()});
 </script>
 
 
