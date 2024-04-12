@@ -11,10 +11,14 @@ const likeRed = 'src/assets/fonts/love-red.svg';
 const likeCurrent = ref(likeGray);
 
 function handleHover() {
-    likeCurrent.value = likeRed;
+    if(card.value.islike[0].count == 0){
+        likeCurrent.value = likeRed;
+    }
 }
 function handleLeave() {
-    likeCurrent.value = likeGray
+    if(card.value.islike[0].count==0){
+        likeCurrent.value = likeGray
+    }
 }
 
 
