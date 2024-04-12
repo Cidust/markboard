@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineModel, defineProps } from "vue";
+import { computed, defineModel, defineProps, onMounted, onUpdated } from "vue";
 import comNote from './com-note.vue';
 import myButton from './my-button.vue';
 import { comData } from '@/mock/index'
@@ -7,6 +7,8 @@ import { headColor } from '@/utils/data'
 import { myDate } from '@/utils/method';
 import {ref} from "vue";
 import { useUserIpStore } from "@/stores/userIp";
+import { watch } from "vue";
+import { findCommentPageApi } from "@/api";
 const props = defineProps({
     card: {
         default: () => ({})
@@ -28,6 +30,33 @@ const canClick=computed(()=>{
     }
 })
 
+const page=ref(1);
+const pagesize=ref(5);
+const comments=ref([]);
+function initComment(){
+    let data={
+        page:page.value,
+        pagesize:pagesize.value,
+        id:props.card.id
+    }
+    console.log('测试初始化时间',data);
+    findCommentPageApi(data).then((res)=>{
+        comments.value=comments.value.concat(res.message);
+        if(res.message.length){
+            page.value++;
+        }else{
+            page.value=0;
+        }
+    })
+}
+
+// 如果打开了详情则获取一次
+watch(sele,(sele)=>{
+    if(sele){
+        initComment();
+    }
+})
+
 const userIp=useUserIpStore();
 // 提交相关
 function submit(card){
@@ -46,6 +75,9 @@ function submit(card){
             comment:commes
         };
         console.log(data);
+        // insertCommentApi(data).then(()=>{
+        //     comment
+        // })
     }
 }
 </script>
@@ -66,19 +98,19 @@ function submit(card){
                         <textarea class="message" placeholder="期待您的评论" maxlength="60" v-model="commes"></textarea>
                         <div class="bt">
                             <input class="name" type="text" placeholder="您的昵称" maxlength="14" v-model="comname">
-                            <myButton :class="{notAllowed:!canClick,ack:canClick}" @click="submit(card)">确定</myButton>
+                            <myButton :class="{notAllowed:!canClick,ack:canClick}" @click="submit(props.card)">确定</myButton>
                         </div>
                     </div>
-                    <p class="title">评论{{ card.comment }}</p>
+                    <p class="title">评论{{ props.card.comcount[0].count }}</p>
                     <div class="comment">
-                        <div class="comment-li" v-for="(comment, index) in card.data" :key="index">
+                        <div class="comment-li" v-for="(comment, index) in comments" :key="index">
                             <div class="user-head" :style="{ backgroundImage: headColor[comment.imgurl] }"></div>
                             <div class="com-main">
                                 <div class="com-head">
                                     <p class="com-name">{{ comment.name }}</p>
                                     <p class="com-time">{{ myDate(comment.moment) }}</p>
                                 </div>
-                                <div class="com-text">{{ comment.message }}</div>
+                                <div class="com-text">{{ comment.comment }}</div>
                             </div>
                         </div>
                     </div>

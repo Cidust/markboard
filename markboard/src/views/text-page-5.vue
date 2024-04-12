@@ -155,7 +155,7 @@ function getNoteCard() {
          console.log(userIp.ip);
         findNotePageApi(data).then((res) => {
             cards.value = cards.value.concat(res.message);
-            console.log(cards.value);
+            // console.log(cards.value);
             if (res.message.length) {
                 page.value++;
             } else {
