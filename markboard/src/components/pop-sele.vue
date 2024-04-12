@@ -1,10 +1,11 @@
 <script setup>
-import { defineModel, defineProps } from "vue";
+import { computed, defineModel, defineProps } from "vue";
 import comNote from './com-note.vue';
 import myButton from './my-button.vue';
 import { comData } from '@/mock/index'
 import { headColor } from '@/utils/data'
 import { myDate } from '@/utils/method';
+import {ref} from "vue";
 const props = defineProps({
     card: {
         default: () => ({})
@@ -13,6 +14,17 @@ const props = defineProps({
 
 const sele = defineModel({
     default: false
+})
+
+// 按钮点击相关组件
+const commes=ref('');
+const comname=ref('');
+const canClick=computed(()=>{
+    if(commes.value){
+        return true;
+    }else{
+        return false
+    }
 })
 </script>
 
@@ -29,15 +41,15 @@ const sele = defineModel({
                         <comNote :note="props.card"></comNote>
                     </div>
                     <div class="form">
-                        <textarea class="message" placeholder="期待您的评论" maxlength="60"></textarea>
+                        <textarea class="message" placeholder="期待您的评论" maxlength="60" v-model="commes"></textarea>
                         <div class="bt">
-                            <input class="name" type="text" placeholder="您的昵称" maxlength="14">
-                            <myButton class="ack">确定</myButton>
+                            <input class="name" type="text" placeholder="您的昵称" maxlength="14" v-model="comname">
+                            <myButton :class="{notAllowed:!canClick,ack:canClick}">确定</myButton>
                         </div>
                     </div>
                     <p class="title">评论{{ card.comment }}</p>
                     <div class="comment">
-                        <div class="comment-li" v-for="(comment, index) in comData.data" :key="index">
+                        <div class="comment-li" v-for="(comment, index) in card.data" :key="index">
                             <div class="user-head" :style="{ backgroundImage: headColor[comment.imgurl] }"></div>
                             <div class="com-main">
                                 <div class="com-head">
@@ -158,6 +170,7 @@ const sele = defineModel({
 }
 
 .message {
+    color: #595959;
     resize: none;
     padding: 0;
     width: 286px;
@@ -171,6 +184,7 @@ const sele = defineModel({
 }
 
 .name {
+    color: #595959;
     width: 190px;
     border: 1px solid #595959;
     line-height: 30px;
@@ -214,5 +228,9 @@ const sele = defineModel({
     color: #595959;
     font-size: 12px;
     margin: 0;
+}
+.notAllowed{
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 </style>

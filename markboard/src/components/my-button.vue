@@ -69,6 +69,8 @@ const props = defineProps({
     background: #fafafa;
     color: #262626;
 }
+
+
 </style>
 
 

@@ -57,7 +57,7 @@ function submit() {
         color: colorSelected.value
     }
 
-    
+
     // console.log(data);
     insertNoteApi(data).then((res) => {
         // console.log(res);
@@ -69,15 +69,15 @@ function submit() {
             moment: new Date(),
             label: lableSelected.value,
             color: colorSelected.value,
-            id:res.message.insertId,
-            comcount:[{count:0}],
-            islike:[{count:0}],
-            like:[{count:0}],
-            report:[{count:0}],
+            id: res.message.insertId,
+            comcount: [{ count: 0 }],
+            islike: [{ count: 0 }],
+            like: [{ count: 0 }],
+            report: [{ count: 0 }],
         }
         ElMessage.success('成功！感谢您的留言！')
         emit('clickbt', cardData);
-        mes.value='';
+        mes.value = '';
     })
 }
 
@@ -98,6 +98,14 @@ function aipTest() {
             console.log(res);
         })
 }
+
+const canClick = computed(() => {
+    if (mes.value) {
+        return true
+    } else {
+        return false
+    }
+})
 </script>
 
 <template>
@@ -135,7 +143,8 @@ function aipTest() {
             </div>
             <div class="tail" v-if="crea">
                 <myButton size="max" norm="secondary" class="drop" @click="drop()">丢弃</myButton>
-                <myButton size="max" class="submit" @click="submit()">确认</myButton>
+                <myButton size="max" class="submit" :class="{ notAllowed: !canClick, Allowed: canClick }" @click="submit()">
+                    确认</myButton>
             </div>
         </div>
     </transition>
@@ -239,7 +248,6 @@ function aipTest() {
 .submit {
     margin-left: 20px;
     width: 200px;
-    cursor: pointer;
 }
 
 .colors {
@@ -343,5 +351,14 @@ function aipTest() {
 
 #windows {
     margin-top: 24px;
+}
+
+.notAllowed {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.Allowed {
+    cursor: pointer;
 }
 </style>

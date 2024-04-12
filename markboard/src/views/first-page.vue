@@ -2,11 +2,6 @@
 import headbar from "../components/head-bar.vue";
 import footbar from "../components/foot-bar.vue";
 
-import { signIpApi } from "@/api";
-import { onBeforeMount, onMounted } from "vue";
-import { useUserIpStore } from "@/stores/userIp";
-
-
 </script>
 
 <template>
