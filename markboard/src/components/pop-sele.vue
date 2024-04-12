@@ -6,6 +6,7 @@ import { comData } from '@/mock/index'
 import { headColor } from '@/utils/data'
 import { myDate } from '@/utils/method';
 import {ref} from "vue";
+import { useUserIpStore } from "@/stores/userIp";
 const props = defineProps({
     card: {
         default: () => ({})
@@ -26,6 +27,27 @@ const canClick=computed(()=>{
         return false
     }
 })
+
+const userIp=useUserIpStore();
+// 提交相关
+function submit(card){
+    if(canClick.value){
+        let headColorIndex=Math.floor(Math.random()*12);
+        let name='匿名';
+        if(comname.value){
+            name=comname.value;
+        }
+        console.log(card);
+        let data={
+            noteId:card.id,
+            userId:userIp.ip,
+            moment:new Date(),
+            name:name,
+            comment:commes
+        };
+        console.log(data);
+    }
+}
 </script>
 
 <template>
@@ -44,7 +66,7 @@ const canClick=computed(()=>{
                         <textarea class="message" placeholder="期待您的评论" maxlength="60" v-model="commes"></textarea>
                         <div class="bt">
                             <input class="name" type="text" placeholder="您的昵称" maxlength="14" v-model="comname">
-                            <myButton :class="{notAllowed:!canClick,ack:canClick}">确定</myButton>
+                            <myButton :class="{notAllowed:!canClick,ack:canClick}" @click="submit(card)">确定</myButton>
                         </div>
                     </div>
                     <p class="title">评论{{ card.comment }}</p>

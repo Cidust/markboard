@@ -43,42 +43,44 @@ const rest = computed(() => route.query.id || 0);
 const userIp = useUserIpStore();
 const emit = defineEmits(['clickbt']);
 function submit() {
-    let name = '匿名';
-    if (tex.value) {
-        name = tex.value;
-    }
-    let data = {
-        rest: rest.value,
-        message: mes.value,
-        name: name,
-        userId: userIp.ip,
-        moment: new Date(),
-        label: lableSelected.value,
-        color: colorSelected.value
-    }
-
-
-    // console.log(data);
-    insertNoteApi(data).then((res) => {
-        // console.log(res);
-        let cardData = {
+    if (canClick.value) {
+        let name = '匿名';
+        if (tex.value) {
+            name = tex.value;
+        }
+        let data = {
             rest: rest.value,
             message: mes.value,
             name: name,
             userId: userIp.ip,
             moment: new Date(),
             label: lableSelected.value,
-            color: colorSelected.value,
-            id: res.message.insertId,
-            comcount: [{ count: 0 }],
-            islike: [{ count: 0 }],
-            like: [{ count: 0 }],
-            report: [{ count: 0 }],
+            color: colorSelected.value
         }
-        ElMessage.success('成功！感谢您的留言！')
-        emit('clickbt', cardData);
-        mes.value = '';
-    })
+
+
+        // console.log(data);
+        insertNoteApi(data).then((res) => {
+            // console.log(res);
+            let cardData = {
+                rest: rest.value,
+                message: mes.value,
+                name: name,
+                userId: userIp.ip,
+                moment: new Date(),
+                label: lableSelected.value,
+                color: colorSelected.value,
+                id: res.message.insertId,
+                comcount: [{ count: 0 }],
+                islike: [{ count: 0 }],
+                like: [{ count: 0 }],
+                report: [{ count: 0 }],
+            }
+            ElMessage.success('成功！感谢您的留言！')
+            emit('clickbt', cardData);
+            mes.value = '';
+        })
+    }
 }
 
 
@@ -143,7 +145,8 @@ const canClick = computed(() => {
             </div>
             <div class="tail" v-if="crea">
                 <myButton size="max" norm="secondary" class="drop" @click="drop()">丢弃</myButton>
-                <myButton size="max" class="submit" :class="{ notAllowed: !canClick, Allowed: canClick }" @click="submit()">
+                <myButton size="max" class="submit" :class="{ notAllowed: !canClick, Allowed: canClick }"
+                    @click="submit()">
                     确认</myButton>
             </div>
         </div>
