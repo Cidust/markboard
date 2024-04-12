@@ -152,7 +152,7 @@ function getNoteCard() {
             userId: userIp.ip,
             lable: lindex.value
         }
-         console.log(userIp.ip);
+        //  console.log(userIp.ip);
         findNotePageApi(data).then((res) => {
             cards.value = cards.value.concat(res.message);
             // console.log(cards.value);

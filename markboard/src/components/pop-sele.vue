@@ -5,7 +5,7 @@ import myButton from './my-button.vue';
 import { comData } from '@/mock/index'
 import { headColor } from '@/utils/data'
 import { myDate } from '@/utils/method';
-import {ref} from "vue";
+import { ref } from "vue";
 import { useUserIpStore } from "@/stores/userIp";
 import { watch } from "vue";
 import { findCommentPageApi } from "@/api";
@@ -20,59 +20,65 @@ const sele = defineModel({
 })
 
 // 按钮点击相关组件
-const commes=ref('');
-const comname=ref('');
-const canClick=computed(()=>{
-    if(commes.value){
+const commes = ref('');
+const comname = ref('');
+const canClick = computed(() => {
+    if (commes.value) {
         return true;
-    }else{
+    } else {
         return false
     }
 })
 
-const page=ref(1);
-const pagesize=ref(5);
-const comments=ref([]);
-function initComment(){
-    let data={
-        page:page.value,
-        pagesize:pagesize.value,
-        id:props.card.id
-    }
-    console.log('测试初始化时间',data);
-    findCommentPageApi(data).then((res)=>{
-        comments.value=comments.value.concat(res.message);
-        if(res.message.length){
-            page.value++;
-        }else{
-            page.value=0;
+// 打开时清零
+const page = ref(1);
+const pagesize = ref(5);
+const comments = ref([]);
+function initComment() {
+    if (page.value > 0) {
+        let data = {
+            page: page.value,
+            pagesize: pagesize.value,
+            id: props.card.id
         }
-    })
+        console.log('测试初始化时间', data);
+        findCommentPageApi(data).then((res) => {
+            comments.value = comments.value.concat(res.message);
+            if (res.message.length) {
+                page.value++;
+            } else {
+                page.value = 0;
+            }
+            console.log(comments.value);
+        })
+
+    }
+
 }
 
+
 // 如果打开了详情则获取一次
-watch(sele,(sele)=>{
-    if(sele){
+watch(sele, (sele) => {
+    if (sele) {
         initComment();
     }
 })
 
-const userIp=useUserIpStore();
+const userIp = useUserIpStore();
 // 提交相关
-function submit(card){
-    if(canClick.value){
-        let headColorIndex=Math.floor(Math.random()*12);
-        let name='匿名';
-        if(comname.value){
-            name=comname.value;
+function submit(card) {
+    if (canClick.value) {
+        let name = '匿名';
+        if (comname.value) {
+            name = comname.value;
         }
         console.log(card);
-        let data={
-            noteId:card.id,
-            userId:userIp.ip,
-            moment:new Date(),
-            name:name,
-            comment:commes
+        let data = {
+            noteId: card.id,
+            userId: userIp.ip,
+            moment: new Date(),
+            name: name,
+            comment: commes
         };
         console.log(data);
         // insertCommentApi(data).then(()=>{
@@ -98,13 +104,15 @@ function submit(card){
                         <textarea class="message" placeholder="期待您的评论" maxlength="60" v-model="commes"></textarea>
                         <div class="bt">
                             <input class="name" type="text" placeholder="您的昵称" maxlength="14" v-model="comname">
-                            <myButton :class="{notAllowed:!canClick,ack:canClick}" @click="submit(props.card)">确定</myButton>
+                            <myButton :class="{ notAllowed: !canClick, ack: canClick }" @click="submit(props.card)">确定
+                            </myButton>
                         </div>
                     </div>
                     <p class="title">评论{{ props.card.comcount[0].count }}</p>
                     <div class="comment">
                         <div class="comment-li" v-for="(comment, index) in comments" :key="index">
-                            <div class="user-head" :style="{ backgroundImage: headColor[comment.imgurl] }"></div>
+                            <div class="user-head"
+                                :style="{ backgroundImage: headColor[Math.floor(Math.random() * 12)] }"></div>
                             <div class="com-main">
                                 <div class="com-head">
                                     <p class="com-name">{{ comment.name }}</p>
@@ -201,6 +209,7 @@ function submit(card){
     border-radius: 4px;
     background: #bfbfbf;
 }
+
 .details {
     padding: 0 20px;
 }
@@ -248,42 +257,50 @@ function submit(card){
     outline: none;
 }
 
-.title{
+.title {
     padding-left: -10px;
 }
-.comment-li{
+
+.comment-li {
     display: flex;
     padding-bottom: 30px;
 }
-.user-head{
+
+.user-head {
     flex: none;
     width: 28px;
     height: 28px;
     border-radius: 20px;
-    background-image: linear-gradient(180deg,#ffa39e 0%,#f5222d 100%);
+    background-image: linear-gradient(180deg, #ffa39e 0%, #f5222d 100%);
 }
-.ack{
+
+.ack {
     cursor: pointer;
 }
-.com-main{
+
+.com-main {
     padding: 0 8px;
 }
-.com-head{
+
+.com-head {
     display: flex;
     align-items: center;
 }
-.com-name{
+
+.com-name {
     font-weight: 600;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 8px;
 }
-.com-time{
+
+.com-time {
     color: #595959;
     font-size: 12px;
     margin: 0;
 }
-.notAllowed{
+
+.notAllowed {
     opacity: 0.6;
     cursor: not-allowed;
 }
